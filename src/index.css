@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --bg-dark: #020617;
   --bg-card: rgba(15, 23, 42, 0.6);
@@ -73,7 +77,7 @@ body {
 
 .live-indicator {
   display: flex;
-  items-center;
+  align-items: center;
   gap: 8px;
   color: var(--neon-green);
   font-weight: 800;

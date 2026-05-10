@@ -12,9 +12,26 @@ const JunctionSimulation = () => {
 
     const cars = [];
     const carColors = ['#0ea5e9', '#a855f7', '#22c55e', '#eab308'];
+    const vehicleTypes = ['car', 'car', 'car', 'truck', 'bike', 'ambulance'];
 
     const createCar = (dir) => {
-      const color = carColors[Math.floor(Math.random() * carColors.length)];
+      const type = vehicleTypes[Math.floor(Math.random() * vehicleTypes.length)];
+      let color = carColors[Math.floor(Math.random() * carColors.length)];
+      let width = 20;
+      let height = 10;
+      
+      if (type === 'truck') {
+        width = 35;
+        height = 14;
+      } else if (type === 'bike') {
+        width = 12;
+        height = 6;
+      } else if (type === 'ambulance') {
+        width = 25;
+        height = 12;
+        color = '#ef4444'; // red
+      }
+
       const canvasWidth = canvas.width;
       const canvasHeight = canvas.height;
       const roadWidth = 120;
@@ -28,7 +45,7 @@ const JunctionSimulation = () => {
         case 'W': x = -margin; y = canvasHeight/2 - 25; vx = 2.5; vy = 0; break;
       }
 
-      return { x, y, vx, vy, color, dir, width: 20, height: 10, stopped: false };
+      return { x, y, vx, vy, color, dir, type, width, height, stopped: false };
     };
 
     const drawRoads = () => {
@@ -124,7 +141,7 @@ const JunctionSimulation = () => {
           if (i === j) continue;
           const other = cars[j];
           if (car.dir === other.dir) {
-            const d = 35;
+            const d = (car.width + other.width) / 2 + 10;
             if (car.dir === 'N' && other.y > car.y && other.y - car.y < d) shouldStop = true;
             if (car.dir === 'S' && other.y < car.y && car.y - other.y < d) shouldStop = true;
             if (car.dir === 'E' && other.x < car.x && car.x - other.x < d) shouldStop = true;
@@ -145,7 +162,33 @@ const JunctionSimulation = () => {
         ctx.shadowBlur = 15;
         ctx.shadowColor = car.color;
         ctx.fillStyle = car.color;
-        ctx.fillRect(-car.width/2, -car.height/2, car.width, car.height);
+        
+        if (car.type === 'bike') {
+          ctx.beginPath();
+          ctx.ellipse(0, 0, car.width/2, car.height/2, 0, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillRect(-car.width/2, -car.height/2, car.width, car.height);
+        }
+        
+        if (car.type === 'ambulance') {
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 10px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          
+          ctx.fillText('A', 0, 1);
+          
+          // Flashing lights
+          if (Math.floor(time / 200) % 2 === 0) {
+            ctx.fillStyle = '#3b82f6'; // blue light
+            ctx.fillRect(car.width/2 - 6, -car.height/2, 4, car.height/2);
+          } else {
+            ctx.fillStyle = '#ffffff'; // white light
+            ctx.fillRect(car.width/2 - 6, 0, 4, car.height/2);
+          }
+        }
         
         ctx.restore();
 
