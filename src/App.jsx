@@ -7,7 +7,7 @@ import {
   BarChart3, Settings, Info, Bell, Siren, Wind,
   Heart, ShieldAlert, Bus, School, Bike, ParkingCircle,
   Play, LayoutDashboard, Database, TrendingUp, AlertCircle,
-  ChevronRight, ArrowRight
+  ChevronRight, ArrowRight, X, Video
 } from 'lucide-react';
 
 import JunctionSimulation from './components/JunctionSimulation';
@@ -361,9 +361,9 @@ const EmergencyCorridor = () => (
             ))}
             
             <motion.div 
-              animate={{ x: [0, 600, 0] }}
-              transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-              className="absolute left-12 z-10"
+              animate={{ left: ["-20%", "120%"] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+              className="absolute z-10"
             >
               <div className="flex flex-col items-center">
                 <div className="p-2 rounded bg-neon-red/20 border border-neon-red/50">
@@ -555,6 +555,8 @@ const Dashboard = () => {
 };
 
 const Capabilities = () => {
+  const [activeModal, setActiveModal] = useState(null);
+
   const items = [
     { icon: <Activity size={24} />, title: "Self-Learning Traffic AI", desc: "Reinforcement learning agent that improves with every junction cycle.", color: "purple" },
     { icon: <TrendingUp size={24} />, title: "AI Congestion Prediction", desc: "30-min ahead forecasting with 94%+ accuracy.", color: "blue" },
@@ -566,6 +568,136 @@ const Capabilities = () => {
     { icon: <User size={24} />, title: "Smart Pedestrian Safety", desc: "Adaptive crosswalks that wait for the slowest walker.", color: "blue", status: "ONLINE" },
     { icon: <Shield size={24} />, title: "Helmet & Seatbelt Detection", desc: "AI vision flags violations and issues e-challans.", color: "purple" }
   ];
+
+  const getModalContent = (item) => {
+    switch(item.title) {
+      case "Self-Learning Traffic AI":
+        return (
+          <div className="space-y-6">
+            <h4 className="text-xl font-black text-neon-purple">Past Traffic History</h4>
+            <div className="h-40 bg-white/5 border border-glass-border flex items-end justify-between p-4 rounded-xl">
+               {[40, 70, 50, 90, 60, 30, 80].map((h, i) => (
+                 <motion.div initial={{height: 0}} animate={{height: `${h}%`}} key={i} className="w-8 bg-neon-purple/80 rounded-t" />
+               ))}
+            </div>
+            <p className="text-sm text-secondary font-medium">Historical analysis of Sector-7 shows a 34% reduction in congestion over the last 30 days due to RL-based continuous signal optimization.</p>
+          </div>
+        );
+      case "AI Congestion Prediction":
+        return (
+          <div className="space-y-6">
+            <h4 className="text-xl font-black text-neon-blue">Current vs Predicted</h4>
+            <div className="flex gap-4">
+               <div className="flex-1 p-4 bg-neon-blue/10 border border-neon-blue/30 rounded-xl">
+                 <span className="text-[10px] font-black uppercase text-secondary block mb-2">Current Load</span>
+                 <span className="text-3xl font-black text-neon-blue">62%</span>
+               </div>
+               <div className="flex-1 p-4 bg-neon-purple/10 border border-neon-purple/30 rounded-xl">
+                 <span className="text-[10px] font-black uppercase text-secondary block mb-2">Predicted (+30m)</span>
+                 <span className="text-3xl font-black text-neon-purple">89%</span>
+               </div>
+            </div>
+            <p className="text-sm text-secondary font-medium">Heavy traffic expected on West Road. AI suggests proactively rerouting 15% of approaching vehicles to prevent gridlock.</p>
+          </div>
+        );
+      case "Smart Pollution Monitoring":
+        return (
+          <div className="space-y-6">
+            <h4 className="text-xl font-black text-neon-green">AQI Density Mapping</h4>
+            <div className="h-40 bg-[url('/traffic_cam.png')] bg-cover bg-center rounded-xl relative overflow-hidden flex items-center justify-center filter sepia opacity-80 border border-neon-green/30">
+               <div className="absolute inset-0 bg-neon-green/20 mix-blend-color"></div>
+               <span className="bg-black/90 px-4 py-2 rounded text-neon-green font-black border border-neon-green/50 z-10 shadow-[0_0_15px_rgba(34,197,94,0.4)]">AQI: 142 (UNHEALTHY)</span>
+            </div>
+            <p className="text-sm text-secondary font-medium">Traffic-prone layers detected. Actively extending green lights on main arteries to disperse idle vehicles and reduce localized emissions.</p>
+          </div>
+        );
+      case "Rain Mode Traffic Control":
+        return (
+          <div className="space-y-6">
+            <h4 className="text-xl font-black text-neon-cyan">Adverse Weather Protocol</h4>
+            <div className="flex justify-between items-center p-6 bg-neon-cyan/10 border border-neon-cyan/30 rounded-xl">
+              <div>
+                <span className="block text-[10px] font-black text-secondary uppercase mb-1">Status</span>
+                <span className="text-xl font-black text-neon-cyan">HEAVY RAIN DETECTED</span>
+              </div>
+              <Cloud size={40} className="text-neon-cyan animate-pulse" />
+            </div>
+            <ul className="text-sm text-secondary font-medium space-y-3 bg-white/5 p-4 rounded-xl border border-glass-border">
+              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-neon-cyan"></div> Increased following distance parameters</li>
+              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-neon-cyan"></div> +15% duration applied to yellow lights</li>
+              <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-neon-cyan"></div> Lowered speed limit thresholds to 40km/h</li>
+            </ul>
+          </div>
+        );
+      case "Accident Detection":
+        return (
+          <div className="space-y-6">
+            <h4 className="text-xl font-black text-neon-red">Incident Response</h4>
+            <div className="aspect-video bg-[url('https://images.unsplash.com/photo-1542128962-9d50ad7bf014?auto=format&fit=crop&q=80')] bg-cover bg-center border-2 border-neon-red/50 rounded-xl relative overflow-hidden filter grayscale contrast-125">
+               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 border-2 border-neon-red rounded-full animate-ping"></div>
+               <span className="absolute top-2 left-2 bg-neon-red text-white text-[10px] font-black px-2 py-1 rounded">CRASH DETECTED</span>
+            </div>
+            <p className="text-sm text-secondary font-medium">Traffic immediately diverted away from Sector 4 collision zone. EMS dispatched automatically. Expected clearance in 45m.</p>
+          </div>
+        );
+      case "Illegal Parking Detection":
+        return (
+          <div className="space-y-6">
+            <h4 className="text-xl font-black text-secondary">Violation Enforcement</h4>
+            <div className="flex gap-4 items-center p-4 bg-white/5 border border-glass-border rounded-xl">
+               <div className="w-20 h-10 bg-[#eab308] border-2 border-black flex items-center justify-center font-mono text-sm text-black font-black rounded">MH12-XX</div>
+               <div className="flex-1">
+                  <span className="text-[10px] text-neon-yellow font-black uppercase block mb-1">Ticket Issued Automatically</span>
+                  <span className="text-xs text-secondary">Blocking active lane, causing 12% flow reduction. Tow truck alerted.</span>
+               </div>
+            </div>
+          </div>
+        );
+      case "School & Bus Priority":
+        return (
+          <div className="space-y-6">
+            <h4 className="text-xl font-black text-neon-green">Transit Priority Active</h4>
+            <div className="p-6 border border-neon-green/30 bg-neon-green/5 rounded-xl flex items-center justify-between">
+               <div>
+                 <span className="block text-[10px] uppercase font-black text-secondary mb-1">School Bus Route 4A</span>
+                 <span className="text-2xl font-black text-neon-green">Green Wave Engaged</span>
+               </div>
+               <Bus size={40} className="text-neon-green drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+            </div>
+          </div>
+        );
+      case "Smart Pedestrian Safety":
+        return (
+          <div className="space-y-6">
+            <h4 className="text-xl font-black text-neon-blue">Adaptive Crosswalks</h4>
+            <div className="p-6 border border-neon-blue/30 bg-neon-blue/5 rounded-xl">
+               <div className="h-3 w-full bg-black rounded-full overflow-hidden mb-4 relative">
+                  <motion.div animate={{width: ["0%", "100%"]}} transition={{duration: 5, repeat: Infinity}} className="absolute left-0 top-0 h-full bg-neon-blue" />
+               </div>
+               <p className="text-sm text-secondary font-bold">Extending pedestrian walk phase by +4.0s for an elderly citizen detected crossing at Junction A1.</p>
+            </div>
+          </div>
+        );
+      case "Helmet & Seatbelt Detection":
+        return (
+          <div className="space-y-6">
+            <h4 className="text-xl font-black text-neon-purple">Vision AI Enforcement</h4>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-6 bg-white/5 rounded-xl text-center border border-glass-border">
+                <span className="block text-4xl font-black text-neon-purple mb-2">142</span>
+                <span className="text-[10px] uppercase tracking-widest text-secondary font-black">No Helmet<br/>Detected Today</span>
+              </div>
+              <div className="p-6 bg-white/5 rounded-xl text-center border border-glass-border">
+                <span className="block text-4xl font-black text-neon-purple mb-2">89</span>
+                <span className="text-[10px] uppercase tracking-widest text-secondary font-black">No Seatbelt<br/>Detected Today</span>
+              </div>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <section className="px-8 py-20 relative overflow-hidden">
@@ -582,7 +714,11 @@ const Capabilities = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((item, i) => (
-            <div key={i} className={`glass-card p-8 group hover:border-neon-${item.color}/50 transition-all cursor-pointer`}>
+            <div 
+              key={i} 
+              onClick={() => setActiveModal(item)}
+              className={`glass-card p-8 group hover:border-neon-${item.color}/50 transition-all cursor-pointer hover:shadow-[0_0_30px_rgba(255,255,255,0.05)]`}
+            >
               <div className={`w-12 h-12 rounded-xl bg-neon-${item.color}/10 border border-neon-${item.color}/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                 <div className={`neon-text-${item.color}`}>{item.icon}</div>
               </div>
@@ -598,6 +734,38 @@ const Capabilities = () => {
           ))}
         </div>
       </div>
+
+      <AnimatePresence>
+        {activeModal && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              className="w-full max-w-lg bg-bg-dark border border-glass-border rounded-2xl overflow-hidden shadow-2xl relative"
+            >
+              <div className={`h-1 w-full bg-neon-${activeModal.color}`}></div>
+              <div className="p-6 border-b border-glass-border flex justify-between items-center bg-white/5">
+                 <div className="flex items-center gap-3">
+                   <div className={`text-neon-${activeModal.color}`}>{activeModal.icon}</div>
+                   <h3 className="text-lg font-black text-white">{activeModal.title}</h3>
+                 </div>
+                 <button onClick={() => setActiveModal(null)} className="text-secondary hover:text-white transition-colors">
+                   <X size={20} />
+                 </button>
+              </div>
+              <div className="p-8">
+                {getModalContent(activeModal)}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
@@ -804,19 +972,19 @@ const Footer = () => (
             <div className="w-8 h-8 rounded bg-white/5 border border-glass-border flex items-center justify-center group-hover:border-neon-blue/30">
                <Bell size={14} className="text-neon-cyan" />
             </div>
-            <span className="text-xs font-bold text-secondary group-hover:text-white transition-colors">ops@nexus-traffic.ai</span>
+            <span className="text-xs font-bold text-secondary group-hover:text-white transition-colors">traffic.control@gov.city.in</span>
           </li>
           <li className="flex items-center gap-4 group cursor-pointer">
             <div className="w-8 h-8 rounded bg-white/5 border border-glass-border flex items-center justify-center group-hover:border-neon-green/30">
                <Smartphone size={14} className="text-neon-green" />
             </div>
-            <span className="text-xs font-bold text-secondary group-hover:text-white transition-colors">+1 (555) 247-3000</span>
+            <span className="text-xs font-bold text-secondary group-hover:text-white transition-colors">1800-GOV-TRAFFIC</span>
           </li>
           <li className="flex items-center gap-4 group cursor-pointer">
             <div className="w-8 h-8 rounded bg-white/5 border border-glass-border flex items-center justify-center group-hover:border-neon-purple/30">
                <Map size={14} className="text-neon-purple" />
             </div>
-            <span className="text-xs font-bold text-secondary group-hover:text-white transition-colors">Smart City HQ, Sector 7</span>
+            <span className="text-xs font-bold text-secondary group-hover:text-white transition-colors">Ministry of Urban Transport, Gov HQ</span>
           </li>
         </ul>
       </div>

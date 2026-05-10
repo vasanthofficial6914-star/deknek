@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Video, X } from 'lucide-react';
 
 const JunctionSimulation = () => {
   const canvasRef = useRef(null);
@@ -108,6 +109,53 @@ const JunctionSimulation = () => {
       ctx.fillText('CONTROL', cx, cy + 8);
     };
 
+    const drawTrafficSignals = (currentLight) => {
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const offset = 70;
+
+      const signals = [
+        { dir: 'N', x: cx + 30, y: cy - offset },
+        { dir: 'S', x: cx - 30, y: cy + offset },
+        { dir: 'E', x: cx + offset, y: cy + 30 },
+        { dir: 'W', x: cx - offset, y: cy - 30 }
+      ];
+
+      signals.forEach(sig => {
+        let isGreen = false;
+        if (currentLight === 'NS' && (sig.dir === 'N' || sig.dir === 'S')) isGreen = true;
+        if (currentLight === 'EW' && (sig.dir === 'E' || sig.dir === 'W')) isGreen = true;
+
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.8)'; // dark bg for signal box
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+        ctx.lineWidth = 1;
+
+        if (sig.dir === 'N' || sig.dir === 'S') {
+          ctx.fillRect(sig.x - 6, sig.y - 12, 12, 24);
+          ctx.strokeRect(sig.x - 6, sig.y - 12, 12, 24);
+          // Red
+          ctx.fillStyle = isGreen ? '#334155' : '#ef4444';
+          ctx.beginPath(); ctx.arc(sig.x, sig.y - 5, 3, 0, Math.PI * 2); ctx.fill();
+          if (!isGreen) { ctx.shadowBlur = 10; ctx.shadowColor = '#ef4444'; ctx.fill(); ctx.shadowBlur = 0; }
+          // Green
+          ctx.fillStyle = isGreen ? '#22c55e' : '#334155';
+          ctx.beginPath(); ctx.arc(sig.x, sig.y + 5, 3, 0, Math.PI * 2); ctx.fill();
+          if (isGreen) { ctx.shadowBlur = 10; ctx.shadowColor = '#22c55e'; ctx.fill(); ctx.shadowBlur = 0; }
+        } else {
+          ctx.fillRect(sig.x - 12, sig.y - 6, 24, 12);
+          ctx.strokeRect(sig.x - 12, sig.y - 6, 24, 12);
+          // Red
+          ctx.fillStyle = isGreen ? '#334155' : '#ef4444';
+          ctx.beginPath(); ctx.arc(sig.x - 5, sig.y, 3, 0, Math.PI * 2); ctx.fill();
+          if (!isGreen) { ctx.shadowBlur = 10; ctx.shadowColor = '#ef4444'; ctx.fill(); ctx.shadowBlur = 0; }
+          // Green
+          ctx.fillStyle = isGreen ? '#22c55e' : '#334155';
+          ctx.beginPath(); ctx.arc(sig.x + 5, sig.y, 3, 0, Math.PI * 2); ctx.fill();
+          if (isGreen) { ctx.shadowBlur = 10; ctx.shadowColor = '#22c55e'; ctx.fill(); ctx.shadowBlur = 0; }
+        }
+      });
+    };
+
     const render = (time) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawRoads();
@@ -198,6 +246,7 @@ const JunctionSimulation = () => {
       }
 
       drawCentralNode(time);
+      drawTrafficSignals(currentLight);
       animationFrameId = requestAnimationFrame(render);
     };
 
@@ -205,13 +254,83 @@ const JunctionSimulation = () => {
     return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
+  const [showCamera, setShowCamera] = useState(false);
+
   return (
-    <canvas 
-      ref={canvasRef} 
-      width={1200} 
-      height={600} 
-      className="w-full h-full object-cover"
-    />
+    <div className="relative w-full h-full">
+      <canvas 
+        ref={canvasRef} 
+        width={1200} 
+        height={600} 
+        className="w-full h-full object-cover"
+      />
+
+      {/* Camera Button Overlay */}
+      <button 
+        onClick={() => setShowCamera(true)}
+        className="absolute top-4 right-4 bg-black/60 border border-neon-cyan/50 text-neon-cyan px-3 py-2 rounded-lg hover:bg-neon-cyan/20 transition-all flex items-center gap-2 group z-10"
+      >
+        <Video size={16} className="group-hover:animate-pulse" />
+        <span className="text-[10px] font-bold uppercase tracking-widest">View Camera</span>
+      </button>
+
+      {/* Camera Modal */}
+      {showCamera && (
+        <div className="absolute inset-0 z-50 bg-black/90 backdrop-blur-md flex flex-col border border-neon-cyan/30 rounded-lg overflow-hidden">
+          <div className="w-full p-3 flex justify-between items-center bg-black border-b border-glass-border">
+             <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 px-2 py-1 bg-red-500/10 border border-red-500/30 rounded">
+                  <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                  <span className="text-[9px] font-black text-red-500 uppercase tracking-widest">Live REC</span>
+                </div>
+                <span className="text-[10px] font-bold text-white uppercase tracking-widest">CAM-07 • Junction A1</span>
+             </div>
+             <button onClick={() => setShowCamera(false)} className="text-secondary hover:text-white transition-colors bg-white/5 p-1 rounded">
+               <X size={16} />
+             </button>
+          </div>
+          
+          <div className="w-full flex-1 relative bg-[#0a0a0a] overflow-hidden flex items-center justify-center">
+             {/* Simulated Camera Feed Background */}
+             <div 
+                className="absolute inset-0 bg-cover bg-center opacity-80 filter grayscale contrast-125 brightness-75"
+                style={{ backgroundImage: `url('/traffic_cam.png')` }}
+             ></div>
+             
+             {/* AI Vision Overlays */}
+             <div className="absolute inset-0 pointer-events-none z-10">
+                <div className="absolute top-[35%] left-[20%] w-[100px] h-[70px] border-2 border-neon-green/80 bg-neon-green/10 flex items-end">
+                   <span className="bg-neon-green text-black text-[9px] font-bold px-1.5 py-0.5 absolute -top-5 left-0">CAR • 98%</span>
+                </div>
+                <div className="absolute top-[40%] left-[60%] w-[150px] h-[90px] border-2 border-neon-purple/80 bg-neon-purple/10 flex items-end">
+                   <span className="bg-neon-purple text-white text-[9px] font-bold px-1.5 py-0.5 absolute -top-5 left-0">TRUCK • 94%</span>
+                </div>
+                <div className="absolute top-[65%] left-[45%] w-[40px] h-[60px] border-2 border-neon-yellow/80 bg-neon-yellow/10 flex items-end">
+                   <span className="bg-neon-yellow text-black text-[9px] font-bold px-1.5 py-0.5 absolute -top-5 left-0">PERSON • 87%</span>
+                </div>
+                
+                {/* Crosshairs */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-30">
+                  <div className="w-full h-px bg-neon-cyan absolute"></div>
+                  <div className="w-px h-full bg-neon-cyan absolute"></div>
+                  <div className="w-24 h-24 border-2 border-neon-cyan rounded-full"></div>
+                </div>
+             </div>
+             
+             {/* Telemetry Data */}
+             <div className="absolute bottom-4 left-4 flex flex-col gap-1 text-[10px] font-mono text-neon-cyan/80 z-20 shadow-black drop-shadow-md">
+                <span>FPS: 29.97</span>
+                <span>RES: 4K UHD AI-ENHANCED</span>
+                <span>MODEL: YOLO-V9 TENSORRT</span>
+             </div>
+             <div className="absolute top-4 right-4 flex flex-col gap-1 text-[10px] font-mono text-neon-cyan/80 text-right z-20 shadow-black drop-shadow-md">
+                <span>ZOOM: 1.0X</span>
+                <span>LATENCY: 12ms</span>
+             </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 
