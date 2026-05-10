@@ -566,7 +566,8 @@ const Capabilities = () => {
     { icon: <Eye size={24} />, title: "Illegal Parking Detection", desc: "ANPR-powered violation alerts in seconds.", color: "secondary" },
     { icon: <Bus size={24} />, title: "School & Bus Priority", desc: "Dedicated green windows for school buses.", color: "green" },
     { icon: <User size={24} />, title: "Smart Pedestrian Safety", desc: "Adaptive crosswalks that wait for the slowest walker.", color: "blue", status: "ONLINE" },
-    { icon: <Shield size={24} />, title: "Helmet & Seatbelt Detection", desc: "AI vision flags violations and issues e-challans.", color: "purple" }
+    { icon: <Shield size={24} />, title: "Helmet & Seatbelt Detection", desc: "AI vision flags violations and issues e-challans.", color: "purple" },
+    { icon: <ShieldAlert size={24} />, title: "People & Women Safety SOS", desc: "Detects non-traffic emergencies & alerts nearby police stations with history tracking.", color: "red", status: "ACTIVE" }
   ];
 
   const getModalContent = (item) => {
@@ -631,13 +632,36 @@ const Capabilities = () => {
         );
       case "Accident Detection":
         return (
-          <div className="space-y-6">
-            <h4 className="text-xl font-black text-neon-red">Incident Response</h4>
-            <div className="aspect-video bg-[url('https://images.unsplash.com/photo-1542128962-9d50ad7bf014?auto=format&fit=crop&q=80')] bg-cover bg-center border-2 border-neon-red/50 rounded-xl relative overflow-hidden filter grayscale contrast-125">
+          <div className="space-y-4">
+            <h4 className="text-xl font-black text-neon-red">Incident Response & Alerts</h4>
+            
+            <div className="aspect-video bg-[url('https://images.unsplash.com/photo-1506145329881-30dbd5d9c240?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center border-2 border-neon-red/50 rounded-xl relative overflow-hidden filter grayscale contrast-125 mb-4">
                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 border-2 border-neon-red rounded-full animate-ping"></div>
-               <span className="absolute top-2 left-2 bg-neon-red text-white text-[10px] font-black px-2 py-1 rounded">CRASH DETECTED</span>
+               <span className="absolute top-2 left-2 bg-neon-red text-white text-[10px] font-black px-2 py-1 rounded shadow-md">CRASH DETECTED</span>
+               <span className="absolute bottom-2 right-2 bg-black/80 border border-white/20 text-white text-[10px] font-mono px-2 py-1 rounded shadow-md">CAM-TAMBARAM-04</span>
             </div>
-            <p className="text-sm text-secondary font-medium">Traffic immediately diverted away from Sector 4 collision zone. EMS dispatched automatically. Expected clearance in 45m.</p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+               <div className="bg-neon-red/10 border border-neon-red/30 p-4 rounded-xl">
+                 <span className="block text-[10px] uppercase text-secondary font-black mb-2">Incident Details</span>
+                 <ul className="text-xs text-white font-mono space-y-2">
+                   <li><span className="text-neon-red">Location:</span> Tambaram, Chennai<br/><span className="text-secondary text-[10px]">(Accident Prone Zone)</span></li>
+                   <li><span className="text-neon-red">Time:</span> Today, 16:04 IST</li>
+                   <li><span className="text-neon-red">Vehicles:</span> SUV (TN-22-XY-9901) & Sedan (TN-11-AB-1234)</li>
+                 </ul>
+               </div>
+
+               <div className="bg-white/5 border border-glass-border p-4 rounded-xl">
+                 <span className="block text-[10px] uppercase text-secondary font-black mb-2">Automated Actions</span>
+                 <ul className="text-xs text-white font-mono space-y-2">
+                   <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-neon-green rounded-full shadow-[0_0_5px_var(--neon-green)]"></div>SMS/Call: Tambaram Govt Hospital</li>
+                   <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-neon-green rounded-full shadow-[0_0_5px_var(--neon-green)]"></div>Dispatch: 2 Ambulances En-Route</li>
+                   <li className="flex items-center gap-2"><div className="w-1.5 h-1.5 bg-neon-green rounded-full shadow-[0_0_5px_var(--neon-green)]"></div>Alert: Local Govt Traffic Police</li>
+                 </ul>
+               </div>
+            </div>
+
+            <p className="text-xs text-secondary font-medium bg-white/5 p-3 rounded-lg border border-glass-border">Traffic immediately diverted away from the collision zone. Surrounding traffic signals synchronized to clear the path for incoming emergency vehicles.</p>
           </div>
         );
       case "Illegal Parking Detection":
@@ -691,6 +715,30 @@ const Capabilities = () => {
                 <span className="block text-4xl font-black text-neon-purple mb-2">89</span>
                 <span className="text-[10px] uppercase tracking-widest text-secondary font-black">No Seatbelt<br/>Detected Today</span>
               </div>
+            </div>
+          </div>
+        );
+      case "People & Women Safety SOS":
+        return (
+          <div className="space-y-4">
+            <h4 className="text-xl font-black text-neon-red">Emergency & SOS Alert</h4>
+            <div className="bg-neon-red/10 border border-neon-red/30 p-4 rounded-xl">
+              <span className="block text-[10px] uppercase text-secondary font-black mb-2">Live Incident Report</span>
+              <ul className="text-xs text-white font-mono space-y-2">
+                <li><span className="text-neon-red">Location:</span> Sector 9 Park (Non-Traffic Zone)</li>
+                <li><span className="text-neon-red">Type:</span> Women Safety SOS / Medical Emergency</li>
+                <li><span className="text-neon-red">Action:</span> Alerts sent to City Center Police Station</li>
+              </ul>
+            </div>
+            <div className="space-y-2">
+               <span className="block text-[10px] uppercase text-secondary font-black">Response History Log</span>
+               <div className="bg-white/5 border border-glass-border p-3 rounded-xl text-xs font-mono space-y-2">
+                 <div className="flex justify-between items-center"><span className="text-neon-red">14:02:15</span><span>SOS Triggered (App/Cam)</span></div>
+                 <div className="flex justify-between items-center"><span className="text-neon-yellow">14:02:18</span><span>Nearby Police Station Notified</span></div>
+                 <div className="flex justify-between items-center"><span className="text-neon-green">14:04:30</span><span>Patrol Unit Beta Arrived</span></div>
+                 <div className="w-full h-px bg-glass-border my-2"></div>
+                 <div className="flex justify-between items-center opacity-60"><span className="text-secondary">09:15:00</span><span>Sector 4 Sidewalk - Medical Resolved</span></div>
+               </div>
             </div>
           </div>
         );
